@@ -16,7 +16,7 @@ public class NomesAleatorios {
     private ArrayList<String> listaDeNomes = new ArrayList<>();
     
     public NomesAleatorios(){
-            listaDeNomes.add("Alice");
+        listaDeNomes.add("Alice");
         listaDeNomes.add("Miguel");
         listaDeNomes.add("Sophia");
         listaDeNomes.add("Arthur");

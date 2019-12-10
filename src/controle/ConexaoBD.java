@@ -15,12 +15,12 @@ public class ConexaoBD {
     public static Connection ConectaBancoDados() throws ClassNotFoundException {
             try{
             Class.forName("org.postgresql.Driver");
-            Connection conecta = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres","postgres","123");
+            Connection conecta = DriverManager.getConnection("jdbc:postgresql://localhost:5432/mini_cadastro","postgres","123");
             //JOptionPane.showMessageDialog(null, "Conectado com sucesso");
             return conecta;
         }
         catch(SQLException error){
-            //JOptionPane.showMessageDialog(null, "Não conectou");
+            JOptionPane.showMessageDialog(null, "Não conectou");
             return null;
         }
     }

@@ -7,15 +7,19 @@
 package telas;
 
 import controle.Controlador;
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
 import negocio.NomesAleatorios;
+import negocio.Pessoa;
 
 /**
  *
  * @author Vinicius
  */
 public class TelaPrincipal extends javax.swing.JFrame {
-    NomesAleatorios listaNomes = new NomesAleatorios();
+    NomesAleatorios nomesAleatorios = new NomesAleatorios();
     Controlador controlador;
+    long dataHoraAgora;
     /** Creates new form TelaPrincipal */
     public TelaPrincipal() {
         try {
@@ -24,6 +28,46 @@ public class TelaPrincipal extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(Controlador.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         initComponents();
+        controlador.selectListaPessoas();
+        carregaCidades();
+    }
+    
+    private void gerarCadastro(){
+        if (txtCidade.getText().isEmpty() || txtCidade.getText().length() <= 3) {
+            JOptionPane.showMessageDialog(this, "O nome da cidade não pode ser menor que 3 caracteres");
+            txtCidade.requestFocus();
+        } else {
+            try {
+                Integer.parseInt(txtCidade.getText());
+                JOptionPane.showMessageDialog(this, "Não é permitido apenas números no nome da cidade");
+                txtCidade.requestFocus();
+            } catch (Exception e) {
+                int qtde = jSliderQtde.getValue();
+                
+                ArrayList<String> listaNomesAleatorios = this.nomesAleatorios.getListaAleatoria(qtde);
+                for (int i = 0; i < qtde; i++) {
+                    dataHoraAgora = System.currentTimeMillis();
+                    String nome = listaNomesAleatorios.get(i).toUpperCase();
+                    String cidade = txtCidade.getText().toUpperCase();
+                    //System.out.println("Cadastro " + i + ": CIDADE: " + txtCidade.getText().toUpperCase() + 
+                    //        " NOME: " + listaNomesAleatorios.get(i).toUpperCase() + " DATA: " + controle.DataHora.converteParaTimestamp(dataHoraAgora));
+                    controlador.cadastraPessoa(nome, cidade, controle.DataHora.converteParaTimestamp(dataHoraAgora));
+                }                
+                JOptionPane.showMessageDialog(this, "Cadastro realizado com sucesso!");
+                controlador.selectListaPessoas();
+                carregaCidades();
+                txtCidade.setText("");
+                jSliderQtde.setValue(1);
+            }
+        }
+    }
+    
+    private void carregaCidades(){
+        jcbCidades.removeAllItems();
+        ArrayList<String> cidades = controlador.getListaCidades();
+        for (int i = 0; i < cidades.size(); i++) {
+            jcbCidades.addItem(cidades.get(i));
+        }
     }
 
     /** This method is called from within the constructor to
@@ -81,7 +125,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
         });
 
         lblBuscaCidade.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
-        lblBuscaCidade.setText("jLabel4");
+        lblBuscaCidade.setText("Cidade");
 
         jtaResultados.setColumns(20);
         jtaResultados.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
@@ -89,7 +133,11 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jspBusca.setViewportView(jtaResultados);
 
         jcbCidades.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
-        jcbCidades.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jcbCidades.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jcbCidadesItemStateChanged(evt);
+            }
+        });
 
         lblExibeQtde.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         lblExibeQtde.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -111,12 +159,6 @@ public class TelaPrincipal extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblTitulo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lblCidade)
-                    .addComponent(jspBusca, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(lblBuscaCidade)
-                        .addGap(18, 18, 18)
-                        .addComponent(jcbCidades, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(btnSair))
@@ -124,15 +166,25 @@ public class TelaPrincipal extends javax.swing.JFrame {
                         .addComponent(lblQuantidade)
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(btnGerar)
-                                .addGap(0, 0, Short.MAX_VALUE))
                             .addComponent(txtCidade)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jSliderQtde, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(btnGerar)
+                                        .addGap(0, 0, Short.MAX_VALUE))
+                                    .addComponent(jSliderQtde, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(lblExibeQtde, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(6, 6, 6)))))
+                                .addGap(6, 6, 6))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(lblBuscaCidade)
+                        .addGap(43, 43, 43)
+                        .addComponent(jcbCidades, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblCidade)
+                            .addComponent(jspBusca, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -175,8 +227,21 @@ public class TelaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSairActionPerformed
 
     private void btnGerarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGerarActionPerformed
-        System.out.println("Lista: " + listaNomes.getListaAleatoria(jSliderQtde.getValue()));
+        gerarCadastro();
     }//GEN-LAST:event_btnGerarActionPerformed
+
+    private void jcbCidadesItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jcbCidadesItemStateChanged
+        try {
+            ArrayList<Pessoa> pessoas = controlador.getPessoasPelCidade(jcbCidades.getSelectedItem().toString());
+            String resultado = "";
+            for (int i = 0; i < pessoas.size(); i++) {
+                resultado = resultado + pessoas.get(i).getTudo();
+            }
+            jtaResultados.setText(resultado);
+        } catch (Exception e) {
+            controlador.selectListaPessoas();
+        }
+    }//GEN-LAST:event_jcbCidadesItemStateChanged
 
     /**
      * @param args the command line arguments

@@ -45,7 +45,11 @@ public class Pessoa {
         return data;
     }
     
+    public String getTudo(){
+        return nome + "  " + cidade + "  " + controle.DataHora.dataFormatada(data) + "\n";
+    }
     
+                
     /*Comparador para ordenar os termos em ordem alfabética*/
     public static Comparator<Pessoa> comparadorTermo = new Comparator<Pessoa>() {
 

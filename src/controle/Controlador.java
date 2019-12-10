@@ -25,8 +25,7 @@ public class Controlador {
         conecta = ConexaoBD.ConectaBancoDados();
     }
     
-    /* Listas temporárias para armazenar os objetos criados    
-       posteriormente serão substituídas pelo banco de dados */    
+    // Lista temporária para armazenar os objetos criados   
     public static ArrayList<Pessoa> listaDePessoas = new ArrayList<>();
     
     /**
@@ -111,6 +110,16 @@ public class Controlador {
         return listaDePessoas;
     }
     
+    public ArrayList<String> getListaCidades(){
+        ArrayList<String> cidades = new ArrayList<>();
+        for (int i = 0; i < listaDePessoas.size(); i++) {
+            if (!cidades.contains(listaDePessoas.get(i).getCidade())) {
+                cidades.add(listaDePessoas.get(i).getCidade());
+            }
+        }
+        return cidades;
+    }
+    
     /**
      * Cria um array com todos as pessoas que contenham a cidade
      * relacionada
@@ -118,10 +127,9 @@ public class Controlador {
      * @return lista de pessoas
      */
     public ArrayList<Pessoa> getPessoasPelCidade(String cidade){
-        
         ArrayList<Pessoa> pessoasPelaCidade = new ArrayList<>();
         for (int i = 0; i < listaDePessoas.size(); i++) {            
-            if (listaDePessoas.get(i).getCidade() == cidade) {
+            if (listaDePessoas.get(i).getCidade().equals(cidade)) {
                 pessoasPelaCidade.add(listaDePessoas.get(i));
             }
         }
